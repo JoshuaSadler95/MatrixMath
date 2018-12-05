@@ -56,13 +56,14 @@ public class MatrixOperator {
         for (int i = 0; i < mult.getNumberOfRows(); i++) {
             for (int j = 0; j < mult.getNumberOfColums(); j++) {
                 double number = 0;
-                for (int k = 0; k < matrix1.getNumberOfColums(); k++) {
-                    number += matrix1.getPos(j,k)*matrix2.getPos(k,j);
+                for (int k = 0; k < matrix2.getNumberOfRows(); k++) {
+                    number += (matrix1.getPos(i,k)*matrix2.getPos(k,j));
                 }
-                mult.setPos(j,i,number);
+                mult.setPos(i,j,number);
             }
         }
         return mult;
     }
+
 
 }
