@@ -129,5 +129,45 @@ public class JUnitTests {
             System.out.println(e);
         }
     }
+    @Test
+    public void matrixUntermatrix(){
+        Matrix matrix = new Matrix(3,3,"1,1,1;1,1,2;1,3,4");
+        matrix.printMatrix();
+        System.out.println();
 
+        MatrixOperator MO = new MatrixOperator();
+
+        try{
+            Matrix unterMatrix = MO.matrixUntermatrix(matrix,1,1);
+            unterMatrix.printMatrix();
+        } catch(Exception e){
+            System.out.println(e);
+        }
+    }
+    @Test
+    public void matrixDet(){
+        Matrix matrix = new Matrix(3,3,"3,1,6;-3,5,0;3,7,1");
+        MatrixOperator MO = new MatrixOperator();
+
+        matrix.printMatrix();
+        System.out.println();
+
+        try{
+            System.out.println(MO.matrixDet(matrix));
+        } catch (Exception e){
+            System.out.println(e);
+        }
+        try{
+            matrix = new Matrix(2,3,"1,2,3;1,2,3");
+            MO.matrixDet(matrix);
+        } catch (Exception e){
+            System.out.println(e);
+        }
+        try{
+            matrix = new Matrix(1,1,"1");
+            MO.matrixDet(matrix);
+        } catch (Exception e){
+            System.out.println(e);
+        }
+    }
 }

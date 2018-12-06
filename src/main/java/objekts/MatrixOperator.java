@@ -65,5 +65,58 @@ public class MatrixOperator {
         return mult;
     }
 
+    public Matrix matrixUntermatrix(Matrix matrix, int row, int coulum) throws Exception{
+        if(matrix.getNumberOfRows() != matrix.getNumberOfColums()) throw new Exception();
+        Matrix unterMatrix = new Matrix(matrix.getNumberOfRows()-1,matrix.getNumberOfColums()-1);
 
+        int i_=0;
+        int j_=0;
+
+        for (int i = 0; i < unterMatrix.getNumberOfRows(); i++) {
+            if(i>=row) i_ = 1;
+            else i_ = 0;
+            for (int j = 0; j < unterMatrix.getNumberOfColums(); j++) {
+                if(j>=coulum) j_ = 1;
+                else j_ = 0;
+                unterMatrix.setPos(i,j,matrix.getPos((i+i_),(j+j_)));
+            }
+        }
+
+        return unterMatrix;
+    }
+
+    public double matrixDet(Matrix matrix) throws Exception{
+        double[][] mx = matrix.getMatrix();
+        return matrixDetArray(mx);
+    }
+
+    private double matrixDetArray(final double[][] matrix){
+        if (matrix.length != matrix[0].length) {
+            throw new IllegalArgumentException("Die Matix ist nicht quadratisch!");
+        }
+        int n = matrix.length;
+        double[][] subMatrix;
+        double det = 0;
+        if (n == 1) {
+            det = matrix[0][0];
+            return det;
+        } else if (n == 2) {
+            det = (matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0]);
+            return det;
+        }
+        for (int i = 0; i < n; i++) {
+            subMatrix = new double[n - 1][n - 1];
+            for (int j = 1; j < n; j++) {
+                for (int k = 0; k < n; k++) {
+                    if (k < i) {
+                        subMatrix[j - 1][k] = matrix[j][k];
+                    } else if (k > i) {
+                        subMatrix[j - 1][k - 1] = matrix[j][k];
+                    }
+                }
+            }
+            det += (matrix[0][i] * Math.pow(-1, i) * matrixDetArray(subMatrix));
+        }
+        return det;
+    }
 }
