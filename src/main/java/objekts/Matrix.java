@@ -11,6 +11,7 @@ public class Matrix {
         matrix = new double[numberOfRows][numberOfColums];
         fillMatrix(numbers);
     }
+
     public Matrix(int numberOfRows, int numberOfColums){
         this.numberOfColums = numberOfColums;
         this.numberOfRows = numberOfRows;
