@@ -3,7 +3,7 @@ package objekts;
 
 public class MatrixOperator {
 
-    public Matrix matrixAdd(Matrix m1, Matrix m2) throws Exception{
+    public static Matrix matrixAdd(Matrix m1, Matrix m2) throws Exception{
         if(m1.getNumberOfColums() != m2.getNumberOfColums() || m1.getNumberOfRows() !=m2.getNumberOfRows()){
             throw new Exception(){
                 @Override
@@ -26,11 +26,11 @@ public class MatrixOperator {
         }
     }
 
-    public Matrix matrixSubtakt(Matrix m1, Matrix m2) throws Exception{
+    public static Matrix matrixSubtakt(Matrix m1, Matrix m2) throws Exception{
         return matrixAdd(m1,matrixSkalarMult(m2,-1));
     }
 
-    public Matrix matrixSkalarMult(Matrix matrix, double skalar){
+    public static Matrix matrixSkalarMult(Matrix matrix, double skalar){
         double[][] skalar_Mult_matrix = new double[matrix.getNumberOfRows()][matrix.getNumberOfColums()];
         for (int i = 0; i < matrix.getNumberOfRows(); i++) {
             for (int j = 0; j < matrix.getNumberOfColums(); j++) {
@@ -40,7 +40,7 @@ public class MatrixOperator {
         return new Matrix(skalar_Mult_matrix);
     }
 
-    public Matrix matrixTransformation(Matrix matrix){
+    public static Matrix matrixTransformation(Matrix matrix){
         Matrix matrixTransformd = new Matrix(matrix.getNumberOfColums(),matrix.getNumberOfRows());
         for (int i = 0; i < matrix.getNumberOfRows(); i++) {
             for (int j = 0; j < matrix.getNumberOfColums(); j++) {
@@ -50,7 +50,7 @@ public class MatrixOperator {
         return matrixTransformd;
     }
 
-    public Matrix matrixMult(Matrix matrix1, Matrix matrix2) throws Exception {
+    public static Matrix matrixMult(Matrix matrix1, Matrix matrix2) throws Exception {
         if(matrix1.getNumberOfColums() != matrix2.getNumberOfRows()) throw new Exception();
         Matrix mult = new Matrix(matrix1.getNumberOfRows(), matrix2.getNumberOfColums());
         for (int i = 0; i < mult.getNumberOfRows(); i++) {
@@ -65,7 +65,7 @@ public class MatrixOperator {
         return mult;
     }
 
-    public Matrix matrixUntermatrix(Matrix matrix, int row, int coulum) throws Exception{
+    public static Matrix matrixUntermatrix(Matrix matrix, int row, int coulum) throws Exception{
         if(matrix.getNumberOfRows() != matrix.getNumberOfColums()) throw new Exception();
         Matrix unterMatrix = new Matrix(matrix.getNumberOfRows()-1,matrix.getNumberOfColums()-1);
 
@@ -85,12 +85,18 @@ public class MatrixOperator {
         return unterMatrix;
     }
 
-    public double matrixDet(Matrix matrix) throws Exception{
+    public static double matrixDet(Matrix matrix) throws Exception{
         double[][] mx = matrix.getMatrix();
         return matrixDetArray(mx);
     }
 
-    private double matrixDetArray(final double[][] matrix){
+    public static Matrix invert(Matrix m) throws Exception{
+        if(matrixDet(m) == 0) throw new Exception();
+        double[][] invert = invert(m.getMatrix());
+        return new Matrix(invert);
+    }
+
+    private static double matrixDetArray(final double[][] matrix){
         if (matrix.length != matrix[0].length) {
             throw new IllegalArgumentException("Die Matix ist nicht quadratisch!");
         }
@@ -118,5 +124,88 @@ public class MatrixOperator {
             det += (matrix[0][i] * Math.pow(-1, i) * matrixDetArray(subMatrix));
         }
         return det;
+    }
+
+    private static double[][] invert(double a[][]) {
+        int n = a.length;
+        double x[][] = new double[n][n];
+        double b[][] = new double[n][n];
+        int index[] = new int[n];
+        for (int i=0; i<n; ++i)
+            b[i][i] = 1;
+
+        // Transform the matrix into an upper triangle
+        gaussian(a, index);
+
+        // Update the matrix b[i][j] with the ratios stored
+        for (int i=0; i<n-1; ++i)
+            for (int j=i+1; j<n; ++j)
+                for (int k=0; k<n; ++k)
+                    b[index[j]][k]
+                            -= a[index[j]][i]*b[index[i]][k];
+
+        // Perform backward substitutions
+        for (int i=0; i<n; ++i)
+        {
+            x[n-1][i] = b[index[n-1]][i]/a[index[n-1]][n-1];
+            for (int j=n-2; j>=0; --j)
+            {
+                x[j][i] = b[index[j]][i];
+                for (int k=j+1; k<n; ++k)
+                {
+                    x[j][i] -= a[index[j]][k]*x[k][i];
+                }
+                x[j][i] /= a[index[j]][j];
+            }
+        }
+        return x;
+    }
+
+    private static void gaussian(double a[][], int index[]) {
+        int n = index.length;
+        double c[] = new double[n];
+
+        // Initialize the index
+        for (int i = 0; i < n; ++i)
+            index[i] = i;
+
+        // Find the rescaling factors, one from each row
+        for (int i = 0; i < n; ++i) {
+            double c1 = 0;
+            for (int j = 0; j < n; ++j) {
+                double c0 = Math.abs(a[i][j]);
+                if (c0 > c1) c1 = c0;
+            }
+            c[i] = c1;
+        }
+
+        // Search the pivoting element from each column
+        int k = 0;
+        for (int j = 0; j < n - 1; ++j) {
+            double pi1 = 0;
+            for (int i = j; i < n; ++i) {
+                double pi0 = Math.abs(a[index[i]][j]);
+                pi0 /= c[index[i]];
+                if (pi0 > pi1) {
+                    pi1 = pi0;
+                    k = i;
+                }
+            }
+
+            // Interchange rows according to the pivoting order
+            int itmp = index[j];
+            index[j] = index[k];
+            index[k] = itmp;
+            for (int i = j + 1; i < n; ++i) {
+                double pj = a[index[i]][j] / a[index[j]][j];
+
+                // Record pivoting ratios below the diagonal
+                a[index[i]][j] = pj;
+
+                // Modify other elements accordingly
+                for (int l = j + 1; l < n; ++l)
+                    a[index[i]][l] -= pj * a[index[j]][l];
+            }
+        }
     }
 }

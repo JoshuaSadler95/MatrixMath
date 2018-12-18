@@ -170,4 +170,27 @@ public class JUnitTests {
             System.out.println(e);
         }
     }
+    @Test
+    public void inverse(){
+        Matrix matrix = new Matrix(3,3,"1,0,0;0,1,0;0,0,1");
+        matrix.printMatrix();
+        System.out.println();
+        try {
+            Matrix inverse = MatrixOperator.invert(matrix);
+            inverse.printMatrix();
+            System.out.println();
+        } catch (Exception e) {
+            System.out.println("Fehler!");
+        }
+        matrix = new Matrix(3,3,"1,0,2;1,0,2;1,0,2");
+        matrix.printMatrix();
+        System.out.println();
+        try {
+            System.out.println(MatrixOperator.matrixDet(matrix));
+            Matrix inverse = MatrixOperator.invert(matrix);
+            matrix.printMatrix();
+        } catch (Exception e) {
+            System.out.println("Fehler!");
+        }
+    }
 }
