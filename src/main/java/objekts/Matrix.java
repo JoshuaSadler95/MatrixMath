@@ -1,6 +1,7 @@
 package objekts;
 
 public class Matrix {
+
     private int numberOfColums = 0;
     private int numberOfRows = 0;
     private double[][] matrix;
